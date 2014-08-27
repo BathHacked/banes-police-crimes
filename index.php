@@ -43,6 +43,8 @@
     array_push($formatted_rows, $formatted_row);
   }
 
+  $response = $socrata->put("/resource/" . $database_id, json_encode($formatted_rows));
+
   // Output some info to the browser
   echo 'Getting data for 2010-12... Done!<br />';
 
@@ -69,9 +71,11 @@
     // Decode the data
     $decoded_data = json_decode($raw_data, true);
 
+    $formatted_rows_2 = array();
+
     // Loop through the decoded data
     foreach ($decoded_data as $data_row) {
-      $formatted_row = array(
+      $formatted_row_2 = array(
         "crime_id" => $data_row['id'],
         "month" => $data_row['month'],
         "crime_category" => $data_row['category'], 
@@ -80,11 +84,11 @@
       );
 
       // Add the data to the array
-      array_push($formatted_rows, $formatted_row);
+      array_push($formatted_rows_2, $formatted_row_2);
     }
 
     // Re-encode the array as JSON and put it to Socrata
-    $response = $socrata->post("/resource/" . $database_id, json_encode($formatted_rows));
+    $response = $socrata->post("/resource/" . $database_id, json_encode($formatted_rows_2));
 
     // Output some info to the browser
     echo 'Getting data for ' . $date->format('Y-m') . '... Done!<br />';
