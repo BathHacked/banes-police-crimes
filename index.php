@@ -12,12 +12,12 @@
   $root_url = "";
   $app_token = "";
   $database_id = "";
-  $username = "";
+  $email = "";
   $password = "";
   $response = NULL;
 
   // Create a new authenticated client - include your own email address (username) and password
-  $socrata = new Socrata($root_url, $app_token, $username, $password);
+  $socrata = new Socrata($root_url, $app_token, $email, $password);
 
   // Post (upsert) the data //
 
