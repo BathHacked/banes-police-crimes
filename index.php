@@ -5,6 +5,9 @@
   // Socrata Engine
   require_once("socrata.php");
 
+  // Load in the boundary
+  include('banes-boundary.php');
+
   // Your credentials
   $root_url = "";
   $app_token = "";
@@ -25,15 +28,28 @@
   $begin = strtotime($current_date . ' -6 months');
   $begin = new DateTime( date('r', $begin) );
   $end = new DateTime( $current_date );
-  $end = $end->modify( '+1 month' ); 
   $interval = new DateInterval('P1M');
   $daterange = new DatePeriod($begin, $interval, $end);
 
   // Loop through each month in the data range
   foreach ($daterange as $date) { 
 
+    $url = 'http://data.police.uk/api/crimes-street/all-crime?poly=';
+    $field_string = http_build_query($boundary);
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_string);
+
+    $raw_data = curl_exec($ch);
+
+    var_dump($raw_data);
+
+    curl_close($ch);
+
     // Get the raw data from the source
-    $raw_data = file_get_contents('http://data.police.uk/api/crimes-street/all-crime?poly=51.43679175906548,-2.537071721655479:51.3840416929049,-2.693332146933394:51.33580603567935,-2.722335982183581:51.28053702063033,-2.63378054454681:51.26769052673961,%20-2.4655663254478890:51.31645836802215,-2.269721466895822:51.44412549355397,-2.2767188218925220:51.43883340410438,-2.527320958128073:51.43679175906548,-2.53707172165547&date=' . $date->format('Y-m'));
+    // $raw_data = file_get_contents('http://data.police.uk/api/crimes-street/all-crime?poly=51.43679175906548,-2.537071721655479:51.3840416929049,-2.693332146933394:51.33580603567935,-2.722335982183581:51.28053702063033,-2.63378054454681:51.26769052673961,%20-2.4655663254478890:51.31645836802215,-2.269721466895822:51.44412549355397,-2.2767188218925220:51.43883340410438,-2.527320958128073:51.43679175906548,-2.53707172165547&date=' . $date->format('Y-m'));
 
     // Decode the data
     $decoded_data = json_decode($raw_data, true);
